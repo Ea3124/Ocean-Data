@@ -90,7 +90,7 @@ def select_category_and_species():
     if st.button("확인"):
         # Send category and species to the Flask server
         send_setup_request(st.session_state.category, st.session_state.species)
-        # 페이지가 재렌더링되도록 하기 위해 session state를 바로 확인
+        st.rerun()
 
 def show():
     st.title("Simple Chat")
