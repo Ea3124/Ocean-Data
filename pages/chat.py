@@ -28,7 +28,7 @@ def show():
             st.markdown(message["content"])
 
     # Accept user input
-    if prompt := st.chat_input("What is up?"):
+    if prompt := st.chat_input("무엇이 궁금하신가요?"):
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
         
@@ -36,12 +36,14 @@ def show():
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        # Display assistant response in a streaming manner
-        response_container = st.empty()
+        # Initialize assistant response and start streaming
         assistant_response = ""
-        for word in response_generator():
-            assistant_response += word
-            response_container.markdown(assistant_response)
-        
-        # Add assistant response to chat history
+        with st.chat_message("assistant"):
+            response_container = st.empty()
+            for word in response_generator():
+                assistant_response += word
+                response_container.markdown(assistant_response)
+                time.sleep(0.05)
+
+        # Update session state with completed assistant response
         st.session_state.messages.append({"role": "assistant", "content": assistant_response})
