@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from llm import *
 import pickle
+import gc
+import asyncio  # 비동기 처리를 위한 asyncio 라이브러리
 
 app = Flask(__name__)
 
@@ -44,36 +46,33 @@ def setup():
     category  = data.get('category')
     species = data.get('species')
 
-    if db is None:
-        faiss_db_directory = "./faiss/" + category + "/" + species
+    faiss_db_directory = "./faiss/" + category + "/" + species
 
-        # 빈 docstore와 index_to_docstore_id 생성
-        with open(faiss_db_directory + "_index_to_docstore_id.pkl", "rb") as f:
-            index_to_docstore_id = pickle.load(f)
+    # 빈 docstore와 index_to_docstore_id 생성
+    with open(faiss_db_directory + "_index_to_docstore_id.pkl", "rb") as f:
+        index_to_docstore_id = pickle.load(f)
 
-        with open(faiss_db_directory + "_docstore.pkl", "rb") as f:
-            docstore = pickle.load(f)
+    with open(faiss_db_directory + "_docstore.pkl", "rb") as f:
+        docstore = pickle.load(f)
 
-        # 인덱스 로드 및 FAISS 초기화
-        index = faiss.read_index(faiss_db_directory + "_faiss_db.index")
-        db = FAISS(
-            embedding_function=embeddings,
-            index=index,
-            docstore=docstore,
-            index_to_docstore_id=index_to_docstore_id
-        )
+    # 인덱스 로드 및 FAISS 초기화
+    index = faiss.read_index(faiss_db_directory + "_faiss_db.index")
+    db = FAISS(
+        embedding_function=embeddings,
+        index=index,
+        docstore=docstore,
+        index_to_docstore_id=index_to_docstore_id
+    )
 
     retriever = db.as_retriever(search_type="mmr", search_kwargs={'k': 3, 'fetch_k': 8})
     rag_chain = rag(retriever, llm)
 
-    return jsonify({"message": "FAISS DB initialized successfully"})
+    return jsonify({"message": f"FAISS DB for {species} initialized successfully"})
 
 
 @app.route('/ask', methods=['POST'])
-def ask():
+async def ask():
     global rag_chain
-
-    torch.cuda.empty_cache()
 
     data = request.get_json()
     question = data.get('question')
@@ -81,7 +80,13 @@ def ask():
     if not question:
         return jsonify({"error": "No question provided"}), 400
     
-    response = rag_chain.invoke(question)
+    with torch.no_grad():  # 메모리 최적화
+        response = await asyncio.to_thread(rag_chain.invoke, question)  # 비동기 호출
+
+    # GPU 메모리 해제
+    torch.cuda.empty_cache()
+    gc.collect()  # CPU 메모리 관리 추가
+
     return jsonify(response)
 
 if __name__ == '__main__':
