@@ -52,7 +52,7 @@ def setup_llm_pipeline():
     # 모델 로드 및 양자화 설정 적용
     model = Gemma2ForCausalLM.from_pretrained(
         model_id,
-        #quantization_config=bnb_config,
+        quantization_config=bnb_config,
         device_map="auto",
         trust_remote_code=True )
 
