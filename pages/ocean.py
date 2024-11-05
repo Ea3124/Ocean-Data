@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import requests
 import plotly.express as px
+import pages.model_temp.model_temp as model_temp
 
 def haversine(lon1, lat1, lon2, lat2):
     from math import radians, sin, cos, sqrt, asin
@@ -187,6 +188,7 @@ def show():
             st.error("두 번째 API 요청에 실패했습니다.")
             st.write(f"HTTP 상태 코드: {response2.status_code}")
             return
+    st.write(model_temp.predict_tomorrow(station_code, data_type))
 
 if __name__ == "__main__":
     show()
