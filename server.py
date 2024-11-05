@@ -30,7 +30,6 @@ def home():
 def greet():
     name = request.args.get('name', 'Guest')
     return jsonify(message=f"Hello, {name}!")
-from pyngrok import conf, ngrok
 
 app = Flask(__name__)
 
