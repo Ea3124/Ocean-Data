@@ -87,7 +87,7 @@ async def ask():
     torch.cuda.empty_cache()
     gc.collect()  # CPU 메모리 관리 추가
 
-    return jsonify(response)
+    return jsonify({"answer": response})
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)  # 모든 네트워크 인터페이스에서 접근 가능하게 설정
