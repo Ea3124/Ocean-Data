@@ -28,9 +28,9 @@ def process_temperature_data(json_data):
 
 def show_temperature_forecast_plotly(json_data):
     """
-    72시간 수온 예측 데이터를 Plotly 라인 차트로 시각화합니다.
+    72시간 수온 예측 데이터를 Plotly 라인 차트로 시각화
     """
-    st.subheader("일주일 수온 예측 인터랙티브 라인 그래프")
+    st.subheader("일주일 수온 예측 Line Graph")
     
     # 데이터 처리
     df = process_temperature_data(json_data)
@@ -71,32 +71,32 @@ def show_temperature_forecast_plotly(json_data):
 def show():
     st.title("Ocean Page")
 
-#     # 클라이언트의 IP 주소 가져오기
-#     # try:
-#     #     ip_response = requests.get('https://api.ipify.org?format=json')
-#     #     ip_address = ip_response.json().get('ip')
-#     #     st.write(f"클라이언트 IP 주소: {ip_address}")
+    # st.columns()로 열 생성
+    col1, col2, col3 = st.columns([0.7, 0.15, 0.15])
 
-#     #     # Google Geolocation API를 사용하여 위치 정보 가져오기
-#     #     LOCATION_API_KEY = "localkey"  # Streamlit Secrets 사용 하거나 해야함
-#     #     geolocation_url = f'https://www.googleapis.com/geolocation/v1/geolocate?key={LOCATION_API_KEY}'
-#     #     geolocation_data = {'considerIp': True}
-#     #     geo_response = requests.post(geolocation_url, json=geolocation_data)
-#     #     geo_result = geo_response.json()
+    # # 클라이언트의 IP 주소 가져오기
+    # try:
+    #     ip_response = requests.get('https://api.ipify.org?format=json')
+    #     ip_address = ip_response.json().get('ip')
+        
+    #     # Google Geolocation API를 사용하여 위치 정보 가져오기
+    #     LOCATION_API_KEY = st.secrets["LOCATION_API_KEY"]  # Streamlit Secrets 사용 하거나 해야함
+    #     geolocation_url = f'https://www.googleapis.com/geolocation/v1/geolocate?key={LOCATION_API_KEY}'
+    #     geolocation_data = {'considerIp': True}
+    #     geo_response = requests.post(geolocation_url, json=geolocation_data)
+    #     geo_result = geo_response.json()
 
-#     #     if 'location' in geo_result:
-#     #         latitude = geo_result['location']['lat']
-#     #         longitude = geo_result['location']['lng']
-#     #         st.write(f"추정 위치는 위도 {latitude}, 경도 {longitude}입니다.")
-#     #     else:
-#     #         st.write("위치 정보를 가져올 수 없습니다.")
-#     # except Exception as e:
-#     #     st.write("위치 정보를 가져오는 중 오류가 발생했습니다.")
-#     #     st.write(str(e))
+    #     if 'location' in geo_result:
+    #         latitude = geo_result['location']['lat']
+    #         longitude = geo_result['location']['lng']
+    #     else:
+    #         st.write("위치 정보를 가져올 수 없습니다.")
+    # except Exception as e:
+    #     st.write("위치 정보를 가져오는 중 오류가 발생했습니다.")
+    #     st.write(str(e))
 
     latitude = 35.241984
     longitude = 129.0797056
-    st.write(f"추정 위치는 위도 {latitude}, 경도 {longitude}입니다.")
 
     # 2. 관측소 정보가 담긴 CSV 파일 불러오기
     try:
@@ -114,7 +114,10 @@ def show():
 
     station_code = closest_station['관측소 번호']
     station_name = closest_station['관측 지역']
-    st.write(f"가장 가까운 관측소는 {station_name} ({station_code})입니다.")
+
+    with col1:
+        st.write(f"추정 위치는 **위도 {latitude}**, **경도 {longitude}**입니다.")
+        st.write(f"가장 가까운 관측소는 **{station_name}** 입니다.")
 
     # 4. 관측소 번호에 따라 DataType 결정
     if station_code.startswith('DT') or station_code.startswith('IE'):
@@ -144,6 +147,16 @@ def show():
         'ResultType': 'json'
     }
 
+    model_value = model_temp.predict_tomorrow(station_code, data_type)
+
+    with col2:
+        st.write("익일 수온 예상:")
+        st.markdown(f"""
+            <div style="text-align: center; font-size: 24px;">
+                <strong>{model_value:.2f}°C</strong>
+            </div>
+            """, unsafe_allow_html=True)
+
     # 6. API 호출 및 데이터 가져오기
     with st.spinner('API 요청 중...'):
         # 첫 번째 API 호출
@@ -162,14 +175,14 @@ def show():
             st.subheader("주요 관측 지표")
             col1, col2, col3 = st.columns(3)
             with col1:
-                st.metric("Salinity (ppt)", obs_data.get("Salinity", "N/A"))
-                st.metric("Air Temp (°C)", obs_data.get("air_temp", "N/A"))
+                st.metric("염분 (ppt)", obs_data.get("Salinity", "N/A"))
+                st.metric("기온 (°C)", obs_data.get("air_temp", "N/A"))
             with col2:
-                st.metric("Water Temp (°C)", obs_data.get("water_temp", "N/A"))
-                st.metric("Wind Speed (m/s)", obs_data.get("wind_speed", "N/A"))
+                st.metric("수온 (°C)", obs_data.get("water_temp", "N/A"))
+                st.metric("풍향 (m/s)", obs_data.get("wind_speed", "N/A"))
             with col3:
-                st.metric("Wave Height (m)", obs_data.get("wave_height", "N/A"))
-                st.metric("Current Speed (cm/s)", obs_data.get("current_speed", "N/A"))
+                st.metric("파고 (m)", obs_data.get("wave_height", "N/A"))
+                st.metric("풍속 (cm/s)", obs_data.get("current_speed", "N/A"))
 
         else:
             st.error("첫 번째 API 요청에 실패했습니다.")
@@ -188,7 +201,7 @@ def show():
             st.error("두 번째 API 요청에 실패했습니다.")
             st.write(f"HTTP 상태 코드: {response2.status_code}")
             return
-    st.write(model_temp.predict_tomorrow(station_code, data_type))
+
 
 if __name__ == "__main__":
     show()
