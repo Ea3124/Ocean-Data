@@ -1,26 +1,22 @@
-# app.py
 import streamlit as st
-import requests
+from pages import home, chat, ocean
+from pages.wiki import wiki
+from pages.wiki import wiki_detail
 
-# Streamlit 앱 제목
-st.title("Streamlit - Flask Integration")
+# 사이드바에 Navigation 섹션만 표시
+st.sidebar.title("Navigation")
+page = st.sidebar.selectbox("Select a Page", ["Home", "Wiki", "Chat", "Ocean"])
 
-# API 요청을 보내 데이터를 가져오는 함수
-def get_data_from_backend():
-    try:
-        # Flask 서버에서 데이터 가져오기
-        response = requests.get("http://10.125.70.48:5000/data")
-        response.raise_for_status()  # HTTP 에러가 발생할 경우 예외 발생
-        data = response.json()
-        return data
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error fetching data: {e}")
-        return None
-
-# 버튼 클릭 시 데이터 요청
-if st.button("Fetch Data from Backend"):
-    data = get_data_from_backend()
-    if data:
-        # 데이터 출력
-        st.write("Message from Backend:", data['message'])
-        st.write("Value from Backend:", data['value'])
+# 선택한 페이지에 따라 해당 페이지의 콘텐츠 보여주기
+if page == "Home":
+    home.show()
+elif page == "Wiki":
+    # Wiki 페이지 선택 시 selected_species 여부에 따라 다른 페이지 렌더링
+    if "selected_species" in st.session_state:
+        wiki_detail.show()
+    else:
+        wiki.show()
+elif page == "Chat":
+    chat.show()
+elif page == "Ocean":
+    ocean.show()
