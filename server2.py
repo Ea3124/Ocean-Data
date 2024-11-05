@@ -7,3 +7,6 @@ if __name__ == '__main__':
     print(f" * ngrok 터널 URL: {public_url}")
 
     # 여기에 Flask 앱 실행 코드는 제거하고, ngrok 터널만 열리게 합니다.
+
+# http_tunnel = ngrok.connect(5000)
+# tunnels = ngrok.get_tunnels()

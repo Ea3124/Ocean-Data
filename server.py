@@ -32,9 +32,6 @@ def greet():
 
 app = Flask(__name__)
 
-http_tunnel = ngrok.connect(5000)
-tunnels = ngrok.get_tunnels()
-
 @app.route('/data', methods=['GET'])
 def get_data():
     data = {
