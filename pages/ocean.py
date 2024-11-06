@@ -5,6 +5,14 @@ import numpy as np
 import requests
 import plotly.express as px
 import pages.model_temp.model_temp as model_temp
+from pyngrok import ngrok
+
+if __name__ == '__main__':
+    # ngrok 터널 연결
+    port = 8501
+    public_url = ngrok.connect(port).public_url
+    print(f" * ngrok 터널 URL: {public_url}")
+
 
 def haversine(lon1, lat1, lon2, lat2):
     from math import radians, sin, cos, sqrt, asin
