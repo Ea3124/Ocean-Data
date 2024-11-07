@@ -45,6 +45,8 @@ def handle_user_input():
             )
             response.raise_for_status()  # Raise an error for bad responses
             assistant_response = response.json().get("answer", "돌아온 답변이 없습니다. 다시 질문해주세요.")  # Get the response
+            escaped_text = assistant_response.replace("~", "\\~")
+            assistant_response = escaped_text
         except requests.exceptions.RequestException:
             assistant_response = "에러가 발생했습니다. 다시 질문해주세요."  # Set error message
 
