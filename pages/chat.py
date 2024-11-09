@@ -95,7 +95,7 @@ def select_category_and_species():
         st.rerun()
 
 def show():
-    st.title("Simple Chat")
+    # st.title("Simple Chat")
 
     # Initialize chat history and setup status
     if "messages" not in st.session_state:
