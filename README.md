@@ -7,6 +7,8 @@
 * 양식등대는 2024년 부산 해양데이터 해커톤 본선 진출 및 장려상 수상 작품으로, 해양과 빅데이터의 융합을 기반으로 해양의 디지털 전환과 기후 변화에 대응하는 서비스를 개발하였습니다.
 * 저희 등대지기 팀의 출품작은 '**내 손 안에 들어오는 양식업 도우미**' 로, 양식업을 배우고자 하는 청년 어민들을 대상으로 한 **RAG 기반 챗봇 서비스 및 다양한 해양 데이터를 제공하는 웹 서비스**입니다. 
 
+<br>
+
 ## 🎯 기술 스택
 * **Backend**: <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" />
 * **Frontend**: <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" />
@@ -70,7 +72,7 @@
 ## 🛠️ 설치 및 실행 가이드
 ### 1. 리포지토리 클론
 ```bash
-https://github.com/enchantee00/Ocean-Data.git
+git clone https://github.com/enchantee00/Ocean-Data.git
 ```
 
 ### 2. 의존성 설치
