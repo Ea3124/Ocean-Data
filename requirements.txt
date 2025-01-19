@@ -9,3 +9,8 @@ sentence-transformers
 faiss-cpu
 peft
 flask
+streamlit
+plotly
+matplotlib
+tensorflow
+pyngrok
