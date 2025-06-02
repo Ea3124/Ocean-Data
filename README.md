@@ -21,7 +21,7 @@
 |      김명석       |          정지윤         |      이승재       |          김민경         |
 | :------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: |
 |   <img width="160px" src="https://avatars.githubusercontent.com/mangsgi" />    |                      <img width="160px" src="https://avatars.githubusercontent.com/enchantee00" />    |   <img width="160px" src="https://avatars.githubusercontent.com/Ea3124" />    |                      <img width="160px" src="https://avatars.githubusercontent.com/kim-minkyoung" />    |
-|   UI/Design 개발   |  ML/DL 개발  |   UI/Design 개발   |  ML/DL 개발  |
+|   ML/Frontend   |  ML/DL  |   Backend   |  Frontend  |
 |   [@mangsgi](https://github.com/mangsgi)   |    [@enchantee00](https://github.com/enchantee00)  |   [@Ea3124](https://github.com/Ea3124)   |    [@kim-minkyoung](https://github.com/kim-minkyoung)  |
 | 부산대학교 정보컴퓨터공학부 3학년 | 부산대학교 정보컴퓨터공학부 3학년 | 부산대학교 정보컴퓨터공학부 3학년 | 부산대학교 정보컴퓨터공학부 3학년 |
 
@@ -129,7 +129,7 @@ C:.
 ## 🛠️ 설치 및 실행 가이드
 ### 1. 리포지토리 클론
 ```bash
-git clone https://github.com/enchantee00/Ocean-Data.git
+git clone https://github.com/mangsgi/Ocean-Data.git
 ```
 
 ### 2. 의존성 설치 (가상환경 사용 추천)
