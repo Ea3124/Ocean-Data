@@ -69,38 +69,98 @@
 </div>
 
 ---
+
+<br>
+
+## 📁 프로젝트 주요 구조
+
+```bash
+C:.
+│  app.py                              # Streamlit 메인 앱 파일 (사이드 바 네비게이션 포함)
+│  llm.py                              # LLM 관련 유틸리티 및 처리 함수
+│  requirements.txt                    # 필요한 Python 패키지 목록
+│  server.py                           # 백엔드 서버 실행 스크립트 (Flask API)
+│
+├─.streamlit
+│      config.toml                     # Streamlit 설정
+│      secrets.toml                    # API 키 및 IP 저장 (e.g., ServiceKey)
+│
+├─components # page 구성 파일
+│  │  home.py                          # 홈 페이지 (Streamlit 랜딩 페이지)
+│  │  chat.py                          # Chat 페이지 구성 (LLM 응답 등)
+│  │  ocean.py                         # 실시간 수온 데이터 및 예측 시각화
+│  │
+│  ├─model
+│  │      lstm_model_2012_2024.h5      # 학습된 수온 예측 LSTM 모델
+│  │      model.py                     # 수온 예측 모델 로직
+│  │
+│  └─wiki
+│      │  wiki.py                      # 위키 메인 페이지 (생물 목록 표시)
+│      └─ wiki_detail.py               # 생물 상세 페이지 (종별 특성 표시)
+|
+├─data
+│  │  daily_average_water_bui.csv     # 관측소 별 일평균 부이 수온 데이터 2024.10.06 ~ 2024.11.4
+│  │  daily_average_water_temp.csv    # 관측소 별 일평균 수온 평균 데이터 2024.10.06 ~ 2024.11.4
+│  │  observation_stations.csv        # 수온 관측소 정보
+│  │  optimal_rearing_temperature.csv # 종별 적정 사육 수온
+│  │  question.csv                    # 챗봇 모델 파인튜닝을 위한 사용자 질문 데이터
+│  │  wiki_data.csv                   # 해양 생물 종 정보 데이터
+│  │  yearly_temperature.csv          # 2024년 특정 일별 수온 데이터
+│  │
+│  └─images                           # Wiki 페이지에 사용되는 이미지 모음
+│
+└─faiss # FAISS DB
+    ├─etc                              # 기타 생물 종에 대한 벡터 인덱스
+    │      *.pkl, *.index              
+    │
+    ├─fish                             # 어류 관련 벡터 인덱스
+    │      *.pkl, *.index
+    │
+    ├─seaweed                          # 해조류 관련 벡터 인덱스
+    │      *.pkl, *.index
+    │
+    └─shellfish                        # 패류 관련 벡터 인덱스
+           *.pkl, *.index
+
+```
+
+<br>
+
 ## 🛠️ 설치 및 실행 가이드
 ### 1. 리포지토리 클론
 ```bash
 git clone https://github.com/enchantee00/Ocean-Data.git
 ```
 
-### 2. 의존성 설치
+### 2. 의존성 설치 (가상환경 사용 추천)
+* 파이썬 버전 3.9.21
+* CUDA 버전 11.8
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 3. 환경 변수 설정
-.streamlit 폴더 내 secrets.toml 파일을 생성한 후 아래와 같이 설정합니다:
+* `.streamlit` 폴더 내 `secrets.toml` 파일을 생성한 후 아래와 같이 설정합니다:
 ```bash
-ServiceKey=<your-service-key> # 해양수산부 바다누리 해양정보서비스 API
-LOCATION_API_KEY=<your-api-key> # Google Geolocation API
+# 반드시 KEY는 문자열로 지정 
+BACKEND_IP="<your-backend-ip>"
+ServiceKey="<your-service-key>" # 해양수산부 바다누리 해양정보서비스 API
+LOCATION_API_KEY="<your-api-key>" # Google Geolocation API
 ```
 
 ### 4. 페이지 실행
 ```bash
 # Flask 서버 실행
 python server.py
-
-# 웹페이지 실행
+# 웹 페이지 실행
 streamlit run app.py
 ```
 
 <br>
 
 ## 📈 향후 계획
-* **RAG 모델 경량화 및 온디바이스 실행**을 통해 언제 어디서나 사용가능한 챗봇 구현
-* **정확한 수온 예측 AI 모델**을 구현하여 수온 예측 서비스 추가
+* **RAG 모델 경량화 및 성능 향상**을 통해 언제 어디서나 사용가능하도록 로컬에 설치가능한 챗봇 구현
 * **API 제한이 없는 GPS**를 통한 제한없는 정보 불러오기
+  * _현재 Geolocation API 제한으로 인해 위도와 경도를 고정하고 API 사용은 주석 처리한 상태_
 * **깃허브 Action**를 통한 관측소 수온 정보 실시간 업데이트 및 **CI/CD 구현**
-
+  * _현재는 프로젝트 당시를 기준으로 관측소별 데이터가 존재_

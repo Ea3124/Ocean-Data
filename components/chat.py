@@ -14,7 +14,7 @@ def send_setup_request(category, species):
         "species": species
     }
     try:
-        response = requests.post("http://10.125.70.48:5000/setup", json=setup_data)
+        response = requests.post(f"{st.secrets['BACKEND_IP']}/setup", json=setup_data)
         response.raise_for_status()  # Raise an error for bad responses
         st.session_state.setup_completed = True  # Set setup completion status
     except requests.exceptions.RequestException:
@@ -40,7 +40,7 @@ def handle_user_input():
         # Send prompt to the Flask server
         try:
             response = requests.post(
-                "http://10.125.70.48:5000/ask",
+                f"{st.secrets['BACKEND_IP']}/ask",
                 json={"question": prompt}  # Send question in JSON format
             )
             response.raise_for_status()  # Raise an error for bad responses

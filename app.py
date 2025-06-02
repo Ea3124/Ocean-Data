@@ -1,7 +1,7 @@
 import streamlit as st
-from pages import home, chat, ocean
-from pages.wiki import wiki
-from pages.wiki import wiki_detail
+from components import home, chat, ocean
+from components.wiki import wiki
+from components.wiki import wiki_detail
 
 # 사이드바에 Navigation 섹션만 표시
 st.sidebar.title("Navigation")

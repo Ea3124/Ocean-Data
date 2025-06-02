@@ -6,10 +6,10 @@ from tensorflow.keras.models import load_model
 
 def predict_tomorrow(loc_code, data_type):
     sequence_length = 30
-    csv_file_bui = 'daily_average_water_bui.csv'
-    csv_file_temp = 'daily_average_water_temp.csv'
+    csv_file_bui = 'data/daily_average_water_bui.csv'
+    csv_file_temp = 'data/daily_average_water_temp.csv'
 
-    model = load_model('lstm_model_2012_2024.h5') # 모델 불러오기
+    model = load_model('components/model/lstm_model_2012_2024.h5') # 모델 불러오기
     
     if data_type == 'tideObsRecent':
         data = pd.read_csv(csv_file_temp)

@@ -4,7 +4,7 @@ from requests.exceptions import RequestException
 
 def get_data_from_backend():
     try:
-        response = requests.get("http://10.125.70.48:5000/data")
+        response = requests.get(f"{st.secrets['BACKEND_IP']}/data")
         response.raise_for_status()
         data = response.json()
         return data

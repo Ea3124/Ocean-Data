@@ -1,18 +1,10 @@
-# ocean.py
 import streamlit as st
 import pandas as pd
 import numpy as np
 import requests
 import plotly.express as px
-import pages.model_temp.model_temp as model_temp
+import components.model.model as model
 from pyngrok import ngrok
-
-if __name__ == '__main__':
-    # ngrok 터널 연결
-    port = 8501
-    public_url = ngrok.connect(port).public_url
-    print(f" * ngrok 터널 URL: {public_url}")
-
 
 def haversine(lon1, lat1, lon2, lat2):
     from math import radians, sin, cos, sqrt, asin
@@ -68,13 +60,13 @@ def show_temperature_forecast_plotly(json_data, species_constants):
     
     # 리샘플링 (3시간 간격)
     try:
-        df_resampled = df.resample('3H').mean()
+        df_resampled = df.resample('3h').mean()
     except Exception as e:
         st.error(f"데이터 리샘플링 중 오류가 발생했습니다: {e}")
         return
     
-    ### hc.csv
-    df = pd.read_csv('hc.csv')
+    # 연간 수온 데이터 처리
+    df = pd.read_csv('data/yearly_temperature.csv')
     df['Date'] = pd.to_datetime(df['Date'], format='%Y%m%d')
     df.set_index('Date', inplace=True)
     df_resampled = df
@@ -172,7 +164,7 @@ def show():
     # st.columns()로 열 생성
     col1, col2, col3 = st.columns([0.7, 0.18, 0.12])
 
-    # # 클라이언트의 IP 주소 가져오기
+    # # 클라이언트의 IP 주소 가져오기 (현재 API 토큰 보존을 위해 위도 경도는 임의의 부산 내 위치로 지정)
     # try:
     #     ip_response = requests.get('https://api.ipify.org?format=json')
     #     ip_address = ip_response.json().get('ip')
@@ -196,12 +188,12 @@ def show():
     latitude = 35.241984
     longitude = 129.0797056
 
-    constants_csv_path = 'species_water_temparature.csv'
+    constants_csv_path = 'data/optimal_rearing_temperature.csv'
     species_constants = load_species_constants(constants_csv_path)
 
     # 2. 관측소 정보가 담긴 CSV 파일 불러오기
     try:
-        df_stations = pd.read_csv('observation_stations.csv')
+        df_stations = pd.read_csv('data/observation_stations.csv')
     except FileNotFoundError:
         st.error("관측소 정보 CSV 파일을 찾을 수 없습니다.")
         return
@@ -248,15 +240,15 @@ def show():
         'ResultType': 'json'
     }
 
-    # model_value = model_temp.predict_tomorrow(station_code, data_type)
+    model_value = model.predict_tomorrow(station_code, data_type)
 
-    # with col2:
-    #     st.write("익일 수온 예상:")
-    #     st.markdown(f"""
-    #         <div style="text-align: center; font-size: 24px;">
-    #             <strong>{model_value:.2f}°C</strong>
-    #         </div>
-    #         """, unsafe_allow_html=True)
+    with col2:
+        st.write("익일 수온 예상:")
+        st.markdown(f"""
+            <div style="text-align: center; font-size: 24px;">
+                <strong>{model_value:.2f}°C</strong>
+            </div>
+            """, unsafe_allow_html=True)
 
     # 6. API 호출 및 데이터 가져오기
     with st.spinner('API 요청 중...'):
@@ -303,6 +295,9 @@ def show():
             st.write(f"HTTP 상태 코드: {response2.status_code}")
             return
 
-
 if __name__ == "__main__":
     show()
+    # ngrok 터널 연결 (개발 중단)
+    # port = 8501
+    # public_url = ngrok.connect(port).public_url
+    # print(f" * ngrok 터널 URL: {public_url}")

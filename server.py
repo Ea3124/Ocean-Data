@@ -6,6 +6,40 @@ import asyncio  # 비동기 처리를 위한 asyncio 라이브러리
 
 app = Flask(__name__)
 
+species_name_map = {
+    # etc
+    "멍게": "sea_squirt",
+    "큰징거미새우": "giant_river_prawn",
+    "해삼": "sea_cucumber",
+    "흰다리새우": "white_leg_shrimp",
+
+    # fish
+    "강도다리": "starry_flounder",
+    "넙치": "flatfish",
+    "돔류": "sea_bream",
+    "메기": "catfish",
+    "무지개송어": "rainbow_trout",
+    "뱀장어": "eel",
+    "비단잉어": "koi",
+    "숭어": "mullet",
+    "조피볼락": "rockfish",
+    "향어": "mirror_carp",
+    "황복": "river_pufferfish",
+
+    # seaweed
+    "곰피": "seaweed",
+    "김": "laver",
+    "넓미역": "broad_kelp",
+    "모자반": "sargassum",
+    "미역": "kelp",
+    "청각": "sea_staghorn",
+
+    # shellfish
+    "가리비": "scallop",
+    "전복": "abalone",
+    "참굴": "pacific_oyster"
+}
+
 # 임베딩 설정
 model_path = "intfloat/multilingual-e5-base"
 model_kwargs = {'device': 'cuda'}
@@ -30,8 +64,6 @@ def greet():
     name = request.args.get('name', 'Guest')
     return jsonify(message=f"Hello, {name}!")
 
-app = Flask(__name__)
-
 @app.route('/data', methods=['GET'])
 def get_data():
     data = {
@@ -48,17 +80,30 @@ def setup():
     category  = data.get('category')
     species = data.get('species')
 
-    faiss_db_directory = "./faiss/" + category + "/" + species
+    # species 이름을 영어 이름으로 매핑
+    safe_species = species_name_map.get(species)
+    if not safe_species:
+        return jsonify({"error": f"Species '{species}' is not recognized."}), 404
 
-    # 빈 docstore와 index_to_docstore_id 생성
-    with open(faiss_db_directory + "_index_to_docstore_id.pkl", "rb") as f:
-        index_to_docstore_id = pickle.load(f)
+    faiss_db_directory = f"./faiss/{category}/{safe_species}"
 
-    with open(faiss_db_directory + "_docstore.pkl", "rb") as f:
-        docstore = pickle.load(f)
 
-    # 인덱스 로드 및 FAISS 초기화
-    index = faiss.read_index(faiss_db_directory + "_faiss_db.index")
+    try:
+        # 빈 docstore와 index_to_docstore_id 생성
+        with open(faiss_db_directory + "_index_to_docstore_id.pkl", "rb") as f:
+            index_to_docstore_id = pickle.load(f)
+
+        with open(faiss_db_directory + "_docstore.pkl", "rb") as f:
+            docstore = pickle.load(f)
+
+        # 인덱스 로드 및 FAISS 초기화
+        index = faiss.read_index(faiss_db_directory + "_faiss_db.index")
+
+    except FileNotFoundError as e:
+        return jsonify({"error": f"File not found: {e.filename}"}), 404
+    except Exception as e:
+        return jsonify({"error": f"Failed to load FAISS DB: {str(e)}"}), 500
+
     db = FAISS(
         embedding_function=embeddings,
         index=index,

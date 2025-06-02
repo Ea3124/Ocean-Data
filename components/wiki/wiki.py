@@ -26,7 +26,7 @@ def show():
                     image = Image.open("data/images/placeholder.jpg")
 
                 # 이미지 표시
-                st.image(image, use_column_width=True)
+                st.image(image, use_container_width=True)
 
                 # 클릭 시 상세 페이지로 이동
                 if st.button(f"{species_name}", key=species_name, use_container_width=True):

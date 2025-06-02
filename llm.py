@@ -56,7 +56,7 @@ def setup_llm_pipeline():
         device_map="auto",
         trust_remote_code=True )
 
-#     model = PeftModel.from_pretrained(model, "./persona/checkpoint-200",is_trainable=True)
+    # model = PeftModel.from_pretrained(model, "./persona/checkpoint-200",is_trainable=True)
 
     # HuggingFacePipeline 객체 생성
     text_generation_pipeline = pipeline(
